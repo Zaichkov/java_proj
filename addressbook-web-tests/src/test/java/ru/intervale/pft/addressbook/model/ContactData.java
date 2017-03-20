@@ -1,4 +1,4 @@
-package ru.intervale.pft.addressbook;
+package ru.intervale.pft.addressbook.model;
 
 public class ContactData {
     private final String name;
