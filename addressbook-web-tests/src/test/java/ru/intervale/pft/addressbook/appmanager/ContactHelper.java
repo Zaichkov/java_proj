@@ -9,9 +9,6 @@ public class ContactHelper extends HelperBase {
         super(wd);
     }
 
-    public void returnToHomePage() {
-        click(By.linkText("home page"));
-    }
 
     public void submitContactCreation() {
         click(By.name("submit"));
@@ -24,5 +21,24 @@ public class ContactHelper extends HelperBase {
         type(By.name("company"), contactData.getCompany());
         type(By.name("mobile"), contactData.getMobilePhone());
         type(By.name("email"), contactData.getEmail());
+    }
+
+    public void selectContact() {
+        if (!wd.findElement(By.name("selected[]")).isSelected()) {
+            click(By.name("selected[]"));
+        }
+    }
+
+    public void deleteSelectedContacts() {
+        click(By.xpath(".//*[@value='Delete']"));
+        alertAccept();
+    }
+
+    public void initContactModification() {
+        click(By.xpath(".//*[@id='maintable']/tbody/tr[2]/td[8]/a/img"));
+    }
+
+    public void submitContactModification() {
+        click(By.name("update"));
     }
 }
