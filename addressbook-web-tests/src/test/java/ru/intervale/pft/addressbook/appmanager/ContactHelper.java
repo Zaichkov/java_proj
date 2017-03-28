@@ -1,7 +1,10 @@
 package ru.intervale.pft.addressbook.appmanager;
 
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import ru.intervale.pft.addressbook.model.ContactData;
 
 public class ContactHelper extends HelperBase {
@@ -14,13 +17,19 @@ public class ContactHelper extends HelperBase {
         click(By.name("submit"));
     }
 
-    public void fillContactPage(ContactData contactData) {
+    public void fillContactPage(ContactData contactData, boolean creation) {
         type(By.name("firstname"), contactData.getName());
         type(By.name("lastname"), contactData.getLastName());
         type(By.name("nickname"), contactData.getNickName());
         type(By.name("company"), contactData.getCompany());
         type(By.name("mobile"), contactData.getMobilePhone());
         type(By.name("email"), contactData.getEmail());
+
+        if (creation) {
+            new Select(wd.findElement(By.name("new_group"))).selectByVisibleText(contactData.getGroup());
+        } else {
+            Assert.assertFalse(isElementPresent(By.name("new_group")));
+        }
     }
 
     public void selectContact() {
