@@ -5,13 +5,10 @@ import org.openqa.selenium.WebDriver;
 import ru.intervale.pft.addressbook.model.GroupData;
 
 public class GroupHelper extends HelperBase {
-    public GroupHelper(WebDriver wd) {
-        super(wd);
+    public GroupHelper(ApplicationManager app) {
+        super(app);
     }
 
-    public void returnToGroupPage() {
-        click(By.linkText("group page"));
-    }
 
     public void submitGroupCreation() {
         click(By.name("submit"));
@@ -43,5 +40,16 @@ public class GroupHelper extends HelperBase {
 
     public void submitGroupModification() {
         click(By.name("update"));
+    }
+
+    public void createGroup(GroupData group) {
+        initGroupCreation();
+        fillGroupForm(group);
+        submitGroupCreation();
+        app.getNavigationHelper().gotoGroupPage();
+    }
+
+    public boolean isThereAGroup() {
+        return isElementPresent(By.name("selected[]"));
     }
 }

@@ -8,9 +8,11 @@ import org.openqa.selenium.WebDriver;
 
 public class HelperBase {
     protected WebDriver wd;
+    protected ApplicationManager app;
 
-    public HelperBase(WebDriver wd) {
-        this.wd = wd;
+    public HelperBase(ApplicationManager app) {
+        this.wd = app.wd;
+        this.app = app;
     }
 
     protected void click(By locator) {

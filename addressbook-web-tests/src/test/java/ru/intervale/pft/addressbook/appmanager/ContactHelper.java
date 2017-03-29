@@ -1,18 +1,19 @@
 package ru.intervale.pft.addressbook.appmanager;
 
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import ru.intervale.pft.addressbook.model.ContactData;
 
 public class ContactHelper extends HelperBase {
-    public ContactHelper(WebDriver wd) {
-        super(wd);
+    public ContactHelper(ApplicationManager app) {
+        super(app);
     }
 
 
+    public void gotoAddContactPage() {
+        click(By.linkText("add new"));
+    }
     public void submitContactCreation() {
         click(By.name("submit"));
     }
@@ -49,5 +50,16 @@ public class ContactHelper extends HelperBase {
 
     public void submitContactModification() {
         click(By.name("update"));
+    }
+
+    public void createContact(ContactData contact) {
+        gotoAddContactPage();
+        fillContactPage(contact, true);
+        submitContactCreation();
+        app.getNavigationHelper().gotoHomePage();
+    }
+
+    public boolean isThereAContact() {
+        return isElementPresent(By.name("selected[]"));
     }
 }
