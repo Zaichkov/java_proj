@@ -5,8 +5,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import ru.intervale.pft.addressbook.model.ContactData;
+import ru.intervale.pft.addressbook.model.Contacts;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactHelper extends HelperBase {
@@ -37,8 +37,9 @@ public class ContactHelper extends HelperBase {
         }
     }
 
-    public void selectContact(int index) {
-        wd.findElements(By.name("selected[]")).get(index).click();
+
+    public void selectContactById(int id) {
+        wd.findElement(By.cssSelector("input[value='" + id + "']")).click();
 
     }
 
@@ -47,8 +48,8 @@ public class ContactHelper extends HelperBase {
         alertAccept();
     }
 
-    public void initContactModification(int index) {
-        wd.findElements(By.cssSelector("img[alt='Edit']")).get(index).click();
+    public void initContactModification(int id) {
+        wd.findElement(By.cssSelector("a[href='edit.php?id=" + id + "']")).click();
         }
 
     public void submitContactModification() {
@@ -61,31 +62,31 @@ public class ContactHelper extends HelperBase {
         submitContactCreation();
         app.goTo().gotoHomePage();
     }
-    public void modify(int index, ContactData contact) {
-        initContactModification(index);
+    public void modify(ContactData contact) {
+        initContactModification(contact.getId());
         fillContactPage(contact, false);
         submitContactModification();
         app.goTo().gotoHomePage();
     }
-    public void delete(int index) {
-        selectContact(index);
+
+    public void delete(ContactData contact) {
+        selectContactById(contact.getId());
         deleteSelectedContacts();
         app.goTo().gotoHomePage();
     }
 
-    public boolean isThereAContact() {
-        return isElementPresent(By.name("selected[]"));
-    }
 
-    public List<ContactData> list() {
-        List<ContactData> contacts = new ArrayList<>();
+
+    public Contacts all() {
+        Contacts contacts = new Contacts();
         List<WebElement> elementsTr = wd.findElements(By.cssSelector("tr[name='entry']"));
         for (WebElement elementTr : elementsTr) {
             List<WebElement> elementsTd = elementTr.findElements(By.cssSelector("td"));
-            contacts.add(new ContactData(Integer.parseInt(elementsTd.get(0).findElement(By.tagName("input")).getAttribute("id")),
-                    elementsTd.get(2).getText(), elementsTd.get(1).getText(), null, null, null, null, null));
+            contacts.add(new ContactData().withId(Integer.parseInt(elementsTd.get(0).findElement(By.tagName("input")).getAttribute("id")))
+                    .withName(elementsTd.get(2).getText()).withLastName(elementsTd.get(1).getText()));
         }
         return contacts;
     }
+
 
 }

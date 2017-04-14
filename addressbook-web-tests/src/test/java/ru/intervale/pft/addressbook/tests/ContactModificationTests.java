@@ -5,35 +5,34 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import ru.intervale.pft.addressbook.model.ContactData;
+import ru.intervale.pft.addressbook.model.Contacts;
 
-import java.util.Comparator;
-import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ContactModificationTests extends TestBase {
 
     @BeforeMethod
     public void ensurePreconditions() {
         app.goTo().gotoHomePage();
-        if (app.contact().list().size() == 0) {
-            app.contact().create(new ContactData("Vasya", "Pupkin", "PupOK", "Intervale", "1234567890", "pup@gmail.com", "test1"));
+        if (app.contact().all().size() == 0) {
+            app.contact().create(new ContactData().withName("Vasya").withLastName("Pupkin").withNickName("PupOK").withCompany("Intervale")
+                    .withMobilePhone("1234567890").withEmail("pup@gmail.com").withGroup("test1"));
         }
     }
 
     @Test
     public void testContactModification() {
-        List<ContactData> before = app.contact().list();
-        int index = before.size() - 1;
-        ContactData contact = new ContactData(before.get(index).getId(), "aaa", "111", "PupOK", "Intervale", "1234567890", "pup@gmail.com", null);
-        app.contact().modify(index, contact);
-        List<ContactData> after = app.contact().list();
+        Contacts before = app.contact().all();
+        ContactData modifyContact = before.iterator().next();
+        ContactData contact = new ContactData().withId(modifyContact.getId()).withName("aaa").withLastName("111")
+                .withNickName("PupOK").withCompany("Intervale").withMobilePhone("1234567890").withEmail("pup@gmail.com");
+        app.contact().modify(contact);
+        Contacts after = app.contact().all();
         Assert.assertEquals(after.size(), before.size());
+        assertThat(after.size(), equalTo(before.size()));
 
-        before.remove(index);
-        before.add(contact);
-        Comparator<? super ContactData> byId = (c1, c2) -> Integer.compare(c1.getId(), c2.getId());
-        before.sort(byId);
-        after.sort(byId);
-        Assert.assertEquals(after, before);
+        assertThat(after, equalTo(before.without(modifyContact).withAdded(contact)));
     }
 
 

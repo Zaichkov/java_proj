@@ -1,32 +1,33 @@
 package ru.intervale.pft.addressbook.tests;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import ru.intervale.pft.addressbook.model.ContactData;
+import ru.intervale.pft.addressbook.model.Contacts;
 
-import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ContactDeletionTests extends TestBase {
 
     @BeforeMethod
     public void ensurePreconditions() {
         app.goTo().gotoHomePage();
-        if (app.contact().list().size() == 0) {
-            app.contact().create(new ContactData("Vasya", "Pupkin", "PupOK", "Intervale", "1234567890", "pup@gmail.com", "test1"));
+        if (app.contact().all().size() == 0) {
+            app.contact().create(new ContactData().withName("Vasya").withLastName("Pupkin").withNickName("PupOK")
+                    .withCompany("Intervale").withMobilePhone("1234567890").withEmail("pup@gmail.com").withGroup("test1"));
         }
     }
 
     @Test
     public void testContactDeletion() {
-        List<ContactData> before = app.contact().list();
-        int index = before.size() - 1;
-        app.contact().delete(index);
-        List<ContactData> after = app.contact().list();
-        Assert.assertEquals(after.size(), index);
+        Contacts before = app.contact().all();
+        ContactData deletedContact = before.iterator().next();
+        app.contact().delete(deletedContact);
+        Contacts after = app.contact().all();
+        assertThat(after.size(), equalTo(before.size() - 1));
 
-        before.remove(index);
-        Assert.assertEquals(before, after);
+        assertThat(after, equalTo(before.without(deletedContact)));
 
     }
 
